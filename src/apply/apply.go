@@ -222,27 +222,32 @@ func insertCustomApp(jsPath string, flags Flag) {
 			cssEnableMap += fmt.Sprintf(`,"%s":1`, appName)
 		}
 
-		utils.Replace(
+		utils.HookReplace(
+			"XPUI app map",
 			&content,
 			`\{(\d+:"xpui)`,
 			`{`+appMap+`${1}`)
 
-		utils.ReplaceOnce(
+		utils.HookReplaceOnce(
+			"App react map",
 			&content,
 			REACT_REGEX,
 			`${0}`+appReactMap)
 
-		utils.ReplaceOnce(
+		utils.HookReplaceOnce(
+			"App element map",
 			&content,
 			REACT_ELEMENT_REGEX,
 			appEleMap+`${0}`)
 
-		utils.Replace(
+		utils.HookReplace(
+			"Spicetify._sidebarItemToClone",
 			&content,
 			`\w+\(\)\.createElement\("li",\{className:[\w$]+\},\w+\(\)\.createElement\(\w+,\{uri:"spotify:user:@:collection",to:"/collection"\}`,
 			`Spicetify._sidebarItemToClone=${0}`)
 
-		utils.ReplaceOnce(
+		utils.HookReplaceOnce(
+			"CSS enable map",
 			&content,
 			`\d+:1,\d+:1,\d+:1`,
 			"${0}"+cssEnableMap)
@@ -259,7 +264,8 @@ func insertCustomApp(jsPath string, flags Flag) {
 			1)
 
 		if flags.SidebarConfig {
-			utils.ReplaceOnce(
+			utils.HookReplaceOnce(
+				"Sidebar config hook",
 				&content,
 				`return null!=\w+&&\w+\.totalLength(\?\w+\(\)\.createElement\(\w+,\{contextUri:)(\w+)\.uri`,
 				`return true${1}${2}?.uri||""`)
@@ -275,11 +281,13 @@ func insertHomeConfig(jsPath string, flags Flag) {
 	}
 
 	utils.ModifyFile(jsPath, func(content string) string {
-		utils.ReplaceOnce(
+		utils.HookReplaceOnce(
+			"Home config 1",
 			&content,
 			`(const \w+=null==\w+\?void 0\:)(\w+\.content\.items)`,
 			`${1}SpicetifyHomeConfig.arrange(${2})`)
-		utils.ReplaceOnce(
+		utils.HookReplaceOnce(
+			"Home config 2",
 			&content,
 			`;(\(0,\w+\.useEffect\))`,
 			`;${1}(()=>{SpicetifyHomeConfig.addToMenu();return SpicetifyHomeConfig.removeMenu;},[])${0}`)

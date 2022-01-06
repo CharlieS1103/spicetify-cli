@@ -165,6 +165,10 @@ func WatchCustomApp(appName []string, liveUpdate bool) {
 					subfilePath := filepath.Join(appPath, subfile)
 					appFileList = append(appFileList, subfilePath)
 				}
+				for _, subfile := range(manifestJson.ExtensionFiles) {
+					subfilePath := filepath.Join(appPath, subfile)
+					appFileList = append(appFileList, subfilePath)
+				}
 			}
 
 		}
